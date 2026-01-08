@@ -1,0 +1,126 @@
+# AutoJudge Configuration File
+
+# Data paths
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  dataset_urls:
+    - "https://raw.githubusercontent.com/AREEG94FAHAD/TaskComplexityEval-24/main/problems_data.jsonl"
+  
+# Preprocessing
+preprocessing:
+  lowercase: true
+  remove_special_chars: true
+  remove_stopwords: true
+  lemmatization: true
+  min_word_length: 2
+  max_features: 5000
+  ngram_range: [1, 2]
+
+# Feature engineering
+features:
+  text_statistics: true
+  keyword_features: true
+  complexity_indicators: true
+  tfidf: true
+  word2vec: false  # Set to true for word2vec features (slower but better)
+  
+  keywords:
+    graph: ["graph", "tree", "node", "edge", "dfs", "bfs", "dijkstra", "spanning", "shortest path"]
+    dp: ["dynamic programming", "dp", "memoization", "optimal substructure", "recursion"]
+    greedy: ["greedy", "optimization", "minimum", "maximum"]
+    math: ["prime", "gcd", "lcm", "modulo", "combinatorics", "probability"]
+    data_structures: ["stack", "queue", "heap", "priority queue", "set", "map", "hash"]
+    string: ["string", "pattern", "substring", "palindrome", "anagram"]
+    sorting: ["sort", "merge", "quick", "insertion", "selection"]
+    search: ["binary search", "linear search", "search"]
+
+# Model configuration
+model:
+  classification:
+    type: "ensemble"
+    algorithms:
+      random_forest:
+        n_estimators: 200
+        max_depth: 15
+        min_samples_split: 5
+        min_samples_leaf: 2
+        class_weight: "balanced"
+        random_state: 42
+      
+      xgboost:
+        n_estimators: 150
+        learning_rate: 0.1
+        max_depth: 7
+        subsample: 0.8
+        colsample_bytree: 0.8
+        random_state: 42
+      
+      logistic_regression:
+        C: 1.0
+        max_iter: 1000
+        class_weight: "balanced"
+        random_state: 42
+    
+    ensemble_weights: [0.4, 0.35, 0.25]
+  
+  regression:
+    type: "ensemble"
+    algorithms:
+      gradient_boosting:
+        n_estimators: 300
+        learning_rate: 0.05
+        max_depth: 5
+        min_samples_split: 10
+        random_state: 42
+      
+      random_forest:
+        n_estimators: 200
+        max_depth: 12
+        min_samples_split: 5
+        random_state: 42
+      
+      svr:
+        C: 10.0
+        epsilon: 0.1
+        kernel: "rbf"
+    
+    ensemble_weights: [0.5, 0.3, 0.2]
+
+# Training configuration
+training:
+  test_size: 0.2
+  validation_size: 0.1
+  cv_folds: 5
+  random_state: 42
+  class_balancing: "smote"  # Options: smote, oversample, undersample, none
+  stratify: true
+
+# Evaluation
+evaluation:
+  metrics:
+    classification: ["accuracy", "precision", "recall", "f1", "confusion_matrix"]
+    regression: ["rmse", "mae", "r2", "mape"]
+  visualizations: true
+  save_predictions: true
+
+# Web application
+webapp:
+  host: "0.0.0.0"
+  port: 5000
+  debug: false
+  max_text_length: 10000
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/autojudge.log"
+
+# Model persistence
+model_paths:
+  classifier: "models/classifier.pkl"
+  regressor: "models/regressor.pkl"
+  vectorizer: "models/vectorizer.pkl"
+  feature_extractor: "models/feature_extractor.pkl"
+  scaler: "models/scaler.pkl"

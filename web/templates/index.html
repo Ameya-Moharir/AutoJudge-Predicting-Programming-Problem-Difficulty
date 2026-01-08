@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoJudge - AI Programming Problem Difficulty Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            animation: fadeIn 1s ease;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .input-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            margin-top: 10px;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+            animation: slideInRight 0.5s ease;
+        }
+
+        .results-section h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .difficulty-easy {
+            background: #2ecc71;
+        }
+
+        .difficulty-medium {
+            background: #f39c12;
+        }
+
+        .difficulty-hard {
+            background: #e74c3c;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .confidence-bars {
+            margin-top: 20px;
+        }
+
+        .confidence-item {
+            margin-bottom: 15px;
+        }
+
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .confidence-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .example-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .example-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .example-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .error-message {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+
+        .info-box {
+            background: #e8f4fd;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            padding: 20px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AutoJudge</h1>
+            <p>AI-Powered Programming Problem Difficulty Predictor</p>
+        </div>
+
+        {% if not models_loaded %}
+        <div class="card" style="text-align: center;">
+            <h2 style="color: #e74c3c;">⚠️ Models Not Loaded</h2>
+            <p style="margin: 20px 0;">{{ load_error }}</p>
+            <p style="margin: 20px 0;">Please train the models first by running:</p>
+            <code style="background: #f8f9fa; padding: 10px; border-radius: 5px; display: block; margin: 10px 0;">python scripts/train_models.py --quick</code>
+        </div>
+        {% else %}
+        <div class="main-content">
+            <div class="card input-section">
+                <h2>📝 Enter Problem Details</h2>
+                
+                <form id="predictionForm">
+                    <div class="form-group">
+                        <label for="title">Problem Title</label>
+                        <input type="text" id="title" placeholder="e.g., Two Sum, Binary Search">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Problem Description <span class="required">*</span></label>
+                        <textarea id="description" placeholder="Enter the complete problem description..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputDesc">Input Description</label>
+                        <textarea id="inputDesc" placeholder="Describe the input format..." rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="outputDesc">Output Description</label>
+                        <textarea id="outputDesc" placeholder="Describe the output format..." rows="4"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn" id="predictBtn">
+                        🎯 Predict Difficulty
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" id="clearBtn">
+                        🔄 Clear Form
+                    </button>
+                </form>
+
+                <div class="error-message" id="errorMessage"></div>
+
+                <div class="example-section">
+                    <h3>💡 Try Examples</h3>
+                    <button class="example-btn" data-example="0">Easy Example</button>
+                    <button class="example-btn" data-example="1">Medium Example</button>
+                    <button class="example-btn" data-example="2">Hard Example</button>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>Tip:</strong> More detailed descriptions lead to better predictions!</p>
+                    <p><strong>Note:</strong> The model analyzes text patterns, keywords, and complexity indicators.</p>
+                </div>
+            </div>
+
+            <div class="card results-section" id="resultsSection">
+                <h2>📊 Prediction Results</h2>
+                
+                <div class="result-card">
+                    <div style="text-align: center;">
+                        <span class="difficulty-badge" id="difficultyBadge">EASY</span>
+                        <div class="score-display" id="scoreDisplay">0.0</div>
+                        <p style="opacity: 0.9;">Difficulty Score (0-10)</p>
+                    </div>
+
+                    <div class="confidence-bars">
+                        <div class="confidence-item">
+                            <div class="confidence-label">
+                                <span>🟢 Easy</span>
+                                <span id="easyPercent">0%</span>
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" id="easyBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="confidence-item">
+                            <div class="confidence-label">
+                                <span>🟡 Medium</span>
+                                <span id="mediumPercent">0%</span>
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" id="mediumBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="confidence-item">
+                            <div class="confidence-label">
+                                <span>🔴 Hard</span>
+                                <span id="hardPercent">0%</span>
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" id="hardBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" id="newPredictionBtn">
+                        ➕ Make Another Prediction
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+    </div>
+
+    <script>
+        // Example problems
+        const examples = [];
+
+        // Fetch examples on load
+        fetch('/examples')
+            .then(response => response.json())
+            .then(data => {
+                examples.push(...data);
+            })
+            .catch(err => console.error('Error loading examples:', err));
+
+        // Form elements
+        const form = document.getElementById('predictionForm');
+        const predictBtn = document.getElementById('predictBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const errorMessage = document.getElementById('errorMessage');
+        const newPredictionBtn = document.getElementById('newPredictionBtn');
+
+        // Example buttons
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const exampleIndex = parseInt(this.dataset.example);
+                if (examples[exampleIndex]) {
+                    const example = examples[exampleIndex];
+                    document.getElementById('title').value = example.title;
+                    document.getElementById('description').value = example.description;
+                    document.getElementById('inputDesc').value = example.input_description;
+                    document.getElementById('outputDesc').value = example.output_description;
+                }
+            });
+        });
+
+        // Clear form
+        clearBtn.addEventListener('click', function() {
+            form.reset();
+            hideError();
+        });
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const inputDesc = document.getElementById('inputDesc').value;
+            const outputDesc = document.getElementById('outputDesc').value;
+
+            if (!description.trim()) {
+                showError('Please enter a problem description');
+                return;
+            }
+
+            hideError();
+            showLoading();
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        description: description,
+                        input_description: inputDesc,
+                        output_description: outputDesc
+                    })
+                });
+
+                hideLoading();
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Prediction failed');
+                }
+
+                const result = await response.json();
+                displayResults(result);
+
+            } catch (error) {
+                hideLoading();
+                showError(error.message);
+            }
+        });
+
+        // Display results
+        function displayResults(result) {
+            // Update difficulty badge
+            const difficultyBadge = document.getElementById('difficultyBadge');
+            const difficulty = result.difficulty_class.toUpperCase();
+            difficultyBadge.textContent = difficulty;
+            difficultyBadge.className = 'difficulty-badge difficulty-' + result.difficulty_class;
+
+            // Update score
+            document.getElementById('scoreDisplay').textContent = result.difficulty_score;
+
+            // Update confidence bars
+            updateConfidenceBar('easy', result.confidence.easy);
+            updateConfidenceBar('medium', result.confidence.medium);
+            updateConfidenceBar('hard', result.confidence.hard);
+
+            // Show results
+            resultsSection.classList.add('show');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateConfidenceBar(level, value) {
+            const percent = (value * 100).toFixed(1);
+            document.getElementById(level + 'Percent').textContent = percent + '%';
+            document.getElementById(level + 'Bar').style.width = percent + '%';
+        }
+
+        // New prediction button
+        newPredictionBtn.addEventListener('click', function() {
+            resultsSection.classList.remove('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Error handling
+        function showError(message) {
+            errorMessage.textContent = '⚠️ ' + message;
+            errorMessage.classList.add('show');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+
+        // Loading state
+        function showLoading() {
+            predictBtn.disabled = true;
+            predictBtn.innerHTML = 'Analyzing <span class="loading"></span>';
+        }
+
+        function hideLoading() {
+            predictBtn.disabled = false;
+            predictBtn.innerHTML = '🎯 Predict Difficulty';
+        }
+    </script>
+</body>
+</html>

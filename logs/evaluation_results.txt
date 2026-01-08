@@ -1,0 +1,23 @@
+================================================================================
+MODEL EVALUATION RESULTS
+================================================================================
+
+CLASSIFICATION METRICS:
+  Accuracy: 0.7959
+
+Confusion Matrix:
+             Pred Easy  Pred Medium  Pred Hard
+True Easy          133            8         12
+True Medium         31          179         71
+True Hard           23           23        343
+
+REGRESSION METRICS:
+  MAE:  1.5421
+  RMSE: 1.8391
+  R²:   0.3030
+  MAPE: 44.62%
+
+PREDICTION ACCURACY:
+  Within ±0.5: 18.23%
+  Within ±1.0: 34.26%
+  Within ±1.5: 51.88%
