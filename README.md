@@ -4,7 +4,7 @@ An intelligent system that predicts programming problem difficulty levels using 
 
 ## Demo Video
 
-**Watch the demo video (2-3 minutes):** [INSERT YOUR VIDEO LINK HERE]
+https://drive.google.com/file/d/187gx534jBYyTXK-v1UvguYvYhlkuN_vv/view?usp=sharing
 
 ---
 
@@ -467,37 +467,6 @@ autojudge/
 - Predicted: Hard (Confidence: 88%)
 - Score: 7.3
 
----
-
-## Contributors
-
-**Name**: [YOUR NAME]
-
-**Email**: [YOUR EMAIL]
-
-**Roll Number**: [YOUR ROLL NUMBER]
-
-**Institution**: [YOUR INSTITUTION]
-
-**Course**: [COURSE NAME]
-
-**Submission Date**: January 2026
-
----
-
-## References
-
-1. TaskComplexity Dataset - [Dataset Source]
-2. Scikit-learn Documentation - https://scikit-learn.org/
-3. XGBoost Documentation - https://xgboost.readthedocs.io/
-4. NLTK Documentation - https://www.nltk.org/
-5. Flask Documentation - https://flask.palletsprojects.com/
-
----
-
-## License
-
-This project is licensed under the MIT License.
 
 ---
 
