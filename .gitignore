@@ -44,9 +44,6 @@ ENV/
 *.log
 logs/*.log
 
-# Dataset (too large for GitHub)
-data/raw/*.jsonl
-
 # Environment variables
 .env
 .env.local
